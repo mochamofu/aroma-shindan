@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>こころ香 - 性格診断とあなただけのアロマブレンド</title>
+<meta name="description" content="30の質問からあなたの性格とこころ・からだのサインを読み取り、あなたにぴったりのアロマオイルブレンドをご提案します。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Shippori+Mincho:wght@500;600&display=swap" rel="stylesheet">
+<style>
+/* こころ香 — 温かみのある和のデザイン */
+
+:root {
+  --bg: #f8f2e7;
+  --paper: #fffdf8;
+  --paper-soft: #fbf6ec;
+  --ink: #4a3f35;
+  --ink-soft: #7a6f63;
+  --accent: #c8795a;        /* テラコッタ */
+  --accent-deep: #b06548;
+  --green: #7d9b76;         /* 抹茶 */
+  --green-soft: #e8efe4;
+  --gold: #c9a86a;
+  --line: #e8ddcc;
+  --radius: 20px;
+  --shadow: 0 6px 24px rgba(122, 96, 70, 0.12);
+  --font-body: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Yu Gothic", sans-serif;
+  --font-head: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: var(--font-body);
+  background:
+    radial-gradient(circle at 15% 20%, rgba(201, 168, 106, 0.08), transparent 40%),
+    radial-gradient(circle at 85% 75%, rgba(125, 155, 118, 0.08), transparent 45%),
+    var(--bg);
+  color: var(--ink);
+  line-height: 1.8;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#app { flex: 1; width: 100%; }
+
+/* ---- 背景の飾り(葉っぱ) ---- */
+.bg-deco { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.leaf {
+  position: absolute;
+  width: 130px; height: 130px;
+  background: var(--green);
+  opacity: 0.07;
+  border-radius: 0 65% 0 65%;
+  transform: rotate(20deg);
+}
+.leaf-1 { top: -30px; left: -40px; }
+.leaf-2 { bottom: 12%; right: -50px; width: 170px; height: 170px; transform: rotate(200deg); }
+.leaf-3 { top: 40%; left: -60px; width: 100px; height: 100px; transform: rotate(120deg); background: var(--accent); }
+
+/* ---- 画面切り替え ---- */
+.screen { display: none; position: relative; z-index: 1; padding: 24px 16px 48px; }
+.screen.is-active { display: block; }
+
+.fade-in { animation: fadeUp 0.45s ease both; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- ボタン共通 ---- */
+.btn {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 999px;
+  padding: 14px 36px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.btn:active { transform: scale(0.97); }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(200, 121, 90, 0.35);
+}
+.btn-primary:hover { box-shadow: 0 8px 22px rgba(200, 121, 90, 0.45); transform: translateY(-1px); }
+
+.btn-sub {
+  background: var(--green-soft);
+  color: var(--green);
+  border: 1.5px solid var(--green);
+}
+.btn-sub:hover { background: #dfe9da; }
+.btn-sub:disabled { opacity: 0.7; cursor: default; }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink-soft);
+  padding: 10px 20px;
+}
+.btn-ghost:hover:not(:disabled) { color: var(--accent); }
+.btn-ghost:disabled { opacity: 0.35; cursor: default; }
+
+/* ================= ホーム ================= */
+.home-inner { max-width: 640px; margin: 0 auto; text-align: center; padding-top: 40px; }
+
+.home-eyebrow {
+  color: var(--accent);
+  font-size: 0.95rem;
+  letter-spacing: 0.2em;
+  margin-bottom: 8px;
+}
+
+.home-title {
+  font-family: var(--font-head);
+  font-size: 3.2rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--ink);
+}
+.title-accent { color: var(--accent); }
+
+.home-sub {
+  color: var(--ink-soft);
+  letter-spacing: 0.25em;
+  font-size: 0.9rem;
+  margin-top: 4px;
+  margin-bottom: 32px;
+}
+
+.home-card {
+  background: var(--paper);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 36px 28px;
+  border: 1px solid var(--line);
+}
+
+.home-lead { font-size: 1rem; margin-bottom: 24px; }
+.home-lead strong { color: var(--accent-deep); }
+
+.home-points {
+  list-style: none;
+  text-align: left;
+  max-width: 420px;
+  margin: 0 auto 28px;
+  background: var(--paper-soft);
+  border-radius: 14px;
+  padding: 16px 22px;
+}
+.home-points li {
+  padding: 6px 0;
+  font-size: 0.95rem;
+}
+.point-icon { margin-right: 10px; }
+
+.home-note {
+  margin-top: 18px;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+}
+
+.pc-only { display: none; }
+@media (min-width: 600px) { .pc-only { display: inline; } }
+
+/* ================= 診断 ================= */
+.quiz-inner { max-width: 640px; margin: 0 auto; padding-top: 16px; }
+
+.quiz-header { margin-bottom: 20px; }
+
+.progress-label {
+  display: flex;
+  justify-content: center;
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+  margin-bottom: 8px;
+  letter-spacing: 0.1em;
+}
+
+.progress-track {
+  height: 8px;
+  background: var(--line);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--gold), var(--accent));
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+
+.question-card {
+  background: var(--paper);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--line);
+  padding: 30px 26px;
+}
+
+.question-no {
+  font-family: var(--font-head);
+  color: var(--accent);
+  font-size: 1.05rem;
+  letter-spacing: 0.15em;
+  margin-bottom: 6px;
+}
+
+.question-text {
+  font-size: 1.18rem;
+  font-weight: 700;
+  margin-bottom: 22px;
+}
+
+.options { display: grid; gap: 12px; }
+
+.option-btn {
+  font-family: var(--font-body);
+  text-align: left;
+  font-size: 0.98rem;
+  line-height: 1.6;
+  background: var(--paper-soft);
+  color: var(--ink);
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 18px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+}
+.option-btn:hover {
+  border-color: var(--accent);
+  background: #fdf3ec;
+}
+.option-btn:active { transform: scale(0.99); }
+.option-btn.is-selected {
+  border-color: var(--accent);
+  background: #fbeade;
+  box-shadow: 0 0 0 2px rgba(200, 121, 90, 0.18);
+}
+
+.quiz-footer {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 16px;
+}
+
+/* ================= 結果 ================= */
+.result-inner { max-width: 680px; margin: 0 auto; padding-top: 8px; }
+
+.result-eyebrow {
+  text-align: center;
+  color: var(--accent);
+  letter-spacing: 0.25em;
+  font-size: 0.9rem;
+  margin-bottom: 14px;
+}
+
+.result-card {
+  background: var(--paper);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--line);
+  padding: 28px 26px;
+  margin-bottom: 22px;
+}
+
+.type-card {
+  text-align: center;
+  background:
+    radial-gradient(circle at 80% 10%, rgba(201, 168, 106, 0.12), transparent 50%),
+    var(--paper);
+}
+.type-heading { color: var(--ink-soft); font-size: 0.95rem; }
+.type-name {
+  font-family: var(--font-head);
+  font-size: 2rem;
+  color: var(--accent-deep);
+  letter-spacing: 0.08em;
+  margin: 4px 0 8px;
+}
+.type-catch {
+  font-weight: 700;
+  color: var(--green);
+  margin-bottom: 16px;
+}
+.type-desc { text-align: left; font-size: 0.95rem; }
+
+.result-section-title {
+  font-family: var(--font-head);
+  font-size: 1.25rem;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+  color: var(--ink);
+}
+.title-deco { margin-right: 8px; }
+
+.result-section-lead {
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  margin-bottom: 16px;
+}
+
+/* こころとからだのサイン */
+.need-list { list-style: none; display: grid; gap: 12px; }
+.need-item {
+  background: var(--green-soft);
+  border-radius: 14px;
+  padding: 14px 18px;
+}
+.need-label {
+  display: block;
+  font-weight: 700;
+  color: var(--green);
+  margin-bottom: 2px;
+}
+.need-text { font-size: 0.88rem; color: var(--ink-soft); }
+
+/* ブレンドレシピ */
+.blend-card {
+  background:
+    radial-gradient(circle at 10% 90%, rgba(125, 155, 118, 0.1), transparent 45%),
+    var(--paper);
+}
+.blend-list { list-style: none; display: grid; gap: 10px; margin-bottom: 20px; }
+
+.blend-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: var(--paper-soft);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 16px;
+}
+
+.blend-oil { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+
+.oil-chip {
+  font-size: 0.7rem;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 2px 10px;
+  color: #fff;
+  white-space: nowrap;
+}
+.oil-chip--citrus { background: #e0a23c; }
+.oil-chip--floral { background: #d98ba3; }
+.oil-chip--herb   { background: #8aab5c; }
+.oil-chip--woody  { background: #7e9b8a; }
+.oil-chip--resin  { background: #b08960; }
+.oil-chip--spice  { background: #c4684a; }
+
+.oil-name { font-weight: 700; font-size: 1.02rem; }
+.oil-en { font-size: 0.75rem; color: var(--ink-soft); letter-spacing: 0.05em; }
+
+.blend-drops { display: flex; align-items: center; gap: 8px; }
+
+.drop {
+  width: 16px; height: 16px;
+  fill: var(--accent);
+  opacity: 0.85;
+  margin-right: 1px;
+  vertical-align: middle;
+}
+.drops-num {
+  font-weight: 700;
+  color: var(--accent-deep);
+  white-space: nowrap;
+}
+
+/* 精油の説明 */
+.oil-desc-list { list-style: none; display: grid; gap: 14px; }
+.oil-desc-name { font-size: 1rem; color: var(--accent-deep); margin-bottom: 2px; }
+.oil-desc-text { font-size: 0.9rem; }
+
+/* 楽しみ方 */
+.usage-list { list-style: none; display: grid; gap: 12px; font-size: 0.92rem; }
+.usage-list li {
+  padding-left: 16px;
+  border-left: 3px solid var(--gold);
+}
+.usage-list strong { color: var(--ink); }
+
+/* 注意 */
+.caution-card { background: #fdf6ee; }
+.caution-list {
+  list-style: none;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  display: grid;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.caution-list li { padding-left: 18px; position: relative; }
+.caution-list li::before {
+  content: "・";
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+}
+.caution-list--common { margin-bottom: 0; }
+
+.result-actions { text-align: center; margin: 30px 0 10px; }
+
+/* ---- フッター ---- */
+.site-footer {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 20px 16px 28px;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+}
+
+/* ---- レスポンシブ微調整 ---- */
+@media (max-width: 480px) {
+  .home-title { font-size: 2.5rem; }
+  .home-card { padding: 28px 20px; }
+  .question-card { padding: 24px 18px; }
+  .result-card { padding: 24px 18px; }
+  .type-name { font-size: 1.6rem; }
+}
+
+</style>
+</head>
+<body>
+
+<div class="bg-deco" aria-hidden="true">
+  <span class="leaf leaf-1"></span>
+  <span class="leaf leaf-2"></span>
+  <span class="leaf leaf-3"></span>
+</div>
+
+<main id="app">
+
+  <!-- ホーム画面 -->
+  <section id="screen-home" class="screen is-active">
+    <div class="home-inner">
+      <p class="home-eyebrow">あなたのための、一滴を。</p>
+      <h1 class="home-title">こころ<span class="title-accent">香</span></h1>
+      <p class="home-sub">性格診断 &amp; アロマブレンド処方</p>
+
+      <div class="home-card">
+        <p class="home-lead">
+          30の小さな質問に、ふだんのあなたのまま答えてみてください。<br>
+          あなたの性格と、こころとからだがそっと出しているサインを読み取って、<br class="pc-only">
+          いまのあなたにぴったりの<strong>精油ブレンドレシピ</strong>をお作りします。
+        </p>
+        <ul class="home-points">
+          <li><span class="point-icon">🌿</span>質問は30問・約5分</li>
+          <li><span class="point-icon">💧</span>メジャーな精油30種類からセレクト</li>
+          <li><span class="point-icon">🫖</span>「ラベンダー3滴+オレンジ2滴」のような配合レシピをご提案</li>
+        </ul>
+        <button id="btn-start" class="btn btn-primary">診断をはじめる</button>
+        <p class="home-note">※ この診断は医療行為ではありません。香りを楽しむための参考としてお使いください。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 診断画面 -->
+  <section id="screen-quiz" class="screen">
+    <div class="quiz-inner">
+      <header class="quiz-header">
+        <div class="progress-label">
+          <span id="progress-text">質問 1 / 30</span>
+        </div>
+        <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="30" aria-valuenow="0" id="progress-bar-wrap">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </header>
+
+      <div class="question-card" id="question-card">
+        <p class="question-no" id="question-no">Q1</p>
+        <h2 class="question-text" id="question-text"></h2>
+        <div class="options" id="options"></div>
+      </div>
+
+      <div class="quiz-footer">
+        <button id="btn-back" class="btn btn-ghost" disabled>← 前の質問へ</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 結果画面 -->
+  <section id="screen-result" class="screen">
+    <div class="result-inner" id="result-inner">
+      <!-- JSで描画 -->
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p>こころ香 — あなたの毎日に、やさしい香りを。</p>
+</footer>
+
+<script>
+/* 精油データ（30種類）
+ * needs の各値は 0〜3。その精油が得意とする働きの強さを表す。
+ *   relax    … 緊張・ストレスをゆるめる
+ *   sleep    … 心地よい眠りへ誘う
+ *   uplift   … 気分を明るく前向きに
+ *   energize … 元気・活力をチャージ
+ *   focus    … 頭をクリアにし集中を助ける
+ *   balance  … 自律神経・ホルモンバランスを整える
+ *   comfort  … 不安をやわらげ安心感を与える
+ *   warmth   … からだを温め、巡りを助ける
+ *   clear    … 深い呼吸・リフレッシュ・浄化
+ * strength はその精油の香り立ちの強さ(1=おだやか 〜 3=とても強い)。
+ * 強い香りはブレンド中の滴数を控えめに配分する。
+ */
+(function (global) {
+  const oils = [
+    {
+      id: "lavender", name: "ラベンダー", en: "Lavender",
+      family: "floral", note: "middle", strength: 2,
+      needs: { relax: 3, sleep: 3, comfort: 2, balance: 1 },
+      desc: "アロマの王道。やさしいフローラルの香りが緊張をほどき、おやすみ前の時間を穏やかに包みます。",
+      cautions: ["妊娠初期は使用を控えめに"]
+    },
+    {
+      id: "sweet-orange", name: "スイートオレンジ", en: "Sweet Orange",
+      family: "citrus", note: "top", strength: 2,
+      needs: { uplift: 3, relax: 2, sleep: 1, warmth: 1 },
+      desc: "太陽をぎゅっと絞ったような甘い柑橘の香り。沈んだ気持ちを明るくし、おなかの調子もそっと応援します。",
+      cautions: []
+    },
+    {
+      id: "bergamot", name: "ベルガモット", en: "Bergamot",
+      family: "citrus", note: "top", strength: 2,
+      needs: { comfort: 3, uplift: 2, relax: 2, sleep: 1 },
+      desc: "紅茶アールグレイの香りづけでおなじみ。不安やゆううつをやわらげる、繊細でやさしい柑橘です。",
+      cautions: ["光毒性あり: 肌につけた後12時間は直射日光を避ける"]
+    },
+    {
+      id: "lemon", name: "レモン", en: "Lemon",
+      family: "citrus", note: "top", strength: 2,
+      needs: { focus: 3, clear: 2, uplift: 1 },
+      desc: "きりっとフレッシュな香りが頭のもやを晴らし、集中したい時間の心強い味方になります。",
+      cautions: ["光毒性あり: 肌につけた後12時間は直射日光を避ける"]
+    },
+    {
+      id: "grapefruit", name: "グレープフルーツ", en: "Grapefruit",
+      family: "citrus", note: "top", strength: 2,
+      needs: { energize: 2, uplift: 2, clear: 2 },
+      desc: "はじけるようにみずみずしい香り。気分をリフレッシュし、前に進むエネルギーをくれます。",
+      cautions: ["光毒性あり: 肌につけた後12時間は直射日光を避ける"]
+    },
+    {
+      id: "yuzu", name: "ユズ", en: "Yuzu",
+      family: "citrus", note: "top", strength: 2,
+      needs: { warmth: 2, relax: 2, uplift: 2, comfort: 1 },
+      desc: "冬至のゆず湯でおなじみ、日本人のこころに寄り添う香り。からだを温め、ほっとするひとときを作ります。",
+      cautions: ["肌に使う場合は低濃度で(刺激を感じることがあります)"]
+    },
+    {
+      id: "mandarin", name: "マンダリン", en: "Mandarin",
+      family: "citrus", note: "top", strength: 1,
+      needs: { sleep: 2, relax: 2, comfort: 2, uplift: 1 },
+      desc: "柑橘の中でもっとも穏やかでやさしい香り。デリケートな気分の日や、おやすみ前にも安心して使えます。",
+      cautions: []
+    },
+    {
+      id: "geranium", name: "ゼラニウム", en: "Geranium",
+      family: "floral", note: "middle", strength: 2,
+      needs: { balance: 3, uplift: 1, relax: 1, comfort: 1 },
+      desc: "ローズに似たグリーンフローラルの香り。気分の波やゆらぎがちな心身のバランスを整えてくれます。",
+      cautions: ["妊娠中は使用を控える"]
+    },
+    {
+      id: "rose", name: "ローズオットー", en: "Rose Otto",
+      family: "floral", note: "middle", strength: 3,
+      needs: { uplift: 2, comfort: 2, balance: 2 },
+      desc: "「香りの女王」。深く華やかな香りが自分を大切にする気持ちを呼び覚まし、心に明かりを灯します。",
+      cautions: ["妊娠初期は使用を控える"]
+    },
+    {
+      id: "ylang-ylang", name: "イランイラン", en: "Ylang Ylang",
+      family: "floral", note: "middle", strength: 3,
+      needs: { relax: 2, comfort: 2, balance: 1, sleep: 1, uplift: 1 },
+      desc: "南国の花の甘く濃厚な香り。高ぶった気持ちをゆるめ、自分らしさを取り戻す手助けをしてくれます。",
+      cautions: ["香りが強いため少量から(多量は頭痛のもと)"]
+    },
+    {
+      id: "neroli", name: "ネロリ", en: "Neroli",
+      family: "floral", note: "middle", strength: 2,
+      needs: { comfort: 3, sleep: 2, relax: 2, balance: 1 },
+      desc: "ビターオレンジの花から採れる貴重な精油。不安で眠れない夜に、そっと寄り添ってくれる香りです。",
+      cautions: []
+    },
+    {
+      id: "roman-chamomile", name: "カモミール・ローマン", en: "Roman Chamomile",
+      family: "floral", note: "middle", strength: 3,
+      needs: { sleep: 3, comfort: 2, relax: 2 },
+      desc: "りんごのように甘くやさしい香り。「大丈夫だよ」と語りかけるような、安心感に満ちた精油です。",
+      cautions: ["キク科アレルギーの方は使用を避ける"]
+    },
+    {
+      id: "jasmine", name: "ジャスミン", en: "Jasmine",
+      family: "floral", note: "base", strength: 3,
+      needs: { uplift: 2, comfort: 1, balance: 1, energize: 1 },
+      desc: "夜に香りを増す神秘的な花。自信を取り戻したいとき、背中をそっと押してくれる豊かな香りです。",
+      cautions: ["妊娠中は使用を避ける", "香りが強いため少量から"]
+    },
+    {
+      id: "rosemary", name: "ローズマリー", en: "Rosemary",
+      family: "herb", note: "top", strength: 2,
+      needs: { focus: 3, clear: 2, energize: 2, warmth: 1 },
+      desc: "シャープなハーブの香りが頭をすっきりと目覚めさせ、記憶力や集中力をサポートします。",
+      cautions: ["高血圧・てんかんのある方、妊娠中は使用を避ける"]
+    },
+    {
+      id: "peppermint", name: "ペパーミント", en: "Peppermint",
+      family: "herb", note: "top", strength: 3,
+      needs: { clear: 3, focus: 2, energize: 1 },
+      desc: "清涼感あふれるミントの香り。頭の重さやモヤモヤを吹き飛ばし、気分を一新してくれます。",
+      cautions: ["刺激が強いため少量から", "妊娠中・授乳中は使用を控える"]
+    },
+    {
+      id: "clary-sage", name: "クラリセージ", en: "Clary Sage",
+      family: "herb", note: "middle", strength: 2,
+      needs: { balance: 3, relax: 2, comfort: 1 },
+      desc: "マスカットのような甘さを含むハーブ。女性のリズムや気分のゆらぎに寄り添う代表的な精油です。",
+      cautions: ["妊娠中は使用を避ける", "飲酒時の使用は控える"]
+    },
+    {
+      id: "sweet-marjoram", name: "スイートマージョラム", en: "Sweet Marjoram",
+      family: "herb", note: "middle", strength: 2,
+      needs: { sleep: 2, warmth: 2, relax: 2 },
+      desc: "温かみのあるスパイシーハーブの香り。冷えた心とからだをじんわり温め、深い休息へ導きます。",
+      cautions: ["妊娠中は使用を控える"]
+    },
+    {
+      id: "tea-tree", name: "ティートリー", en: "Tea Tree",
+      family: "woody", note: "top", strength: 2,
+      needs: { clear: 2, focus: 1, energize: 1 },
+      desc: "清潔感のあるシャープな香り。空気も気分もリセットしたいときに頼れる、すこやかさの象徴です。",
+      cautions: ["肌に使う場合は刺激に注意"]
+    },
+    {
+      id: "eucalyptus", name: "ユーカリ", en: "Eucalyptus",
+      family: "woody", note: "top", strength: 3,
+      needs: { clear: 3, focus: 2 },
+      desc: "スーッと鼻に抜ける清涼な香りが呼吸を深くし、こもった空気と気分を一掃してくれます。",
+      cautions: ["乳幼児への使用は避ける", "てんかん・喘息のある方は注意"]
+    },
+    {
+      id: "cypress", name: "サイプレス", en: "Cypress",
+      family: "woody", note: "middle", strength: 2,
+      needs: { warmth: 2, balance: 1, relax: 1, clear: 1 },
+      desc: "ヒノキに似た森の香り。むくみや巡りが気になるときに。気持ちを引き締め、切り替えを助けます。",
+      cautions: ["妊娠中は使用を控える"]
+    },
+    {
+      id: "juniper-berry", name: "ジュニパーベリー", en: "Juniper Berry",
+      family: "woody", note: "top", strength: 2,
+      needs: { clear: 2, focus: 1, warmth: 1, energize: 1 },
+      desc: "ジンの香りづけで知られる澄んだウッディの香り。心身に溜まったものを手放したいときに。",
+      cautions: ["腎臓疾患のある方、妊娠中は使用を避ける"]
+    },
+    {
+      id: "cedarwood", name: "シダーウッド", en: "Cedarwood",
+      family: "woody", note: "base", strength: 2,
+      needs: { sleep: 2, relax: 2, comfort: 1 },
+      desc: "鉛筆を削ったときのようななつかしい木の香り。気持ちをどっしりと落ち着け、安眠を支えます。",
+      cautions: ["妊娠中は使用を控える"]
+    },
+    {
+      id: "sandalwood", name: "サンダルウッド", en: "Sandalwood",
+      family: "woody", note: "base", strength: 2,
+      needs: { relax: 2, sleep: 2, comfort: 2, clear: 1 },
+      desc: "お香でおなじみの白檀。深く瞑想的な香りが呼吸を整え、心を静かな場所へ連れていってくれます。",
+      cautions: []
+    },
+    {
+      id: "hinoki", name: "ヒノキ", en: "Hinoki",
+      family: "woody", note: "middle", strength: 2,
+      needs: { relax: 3, clear: 1, sleep: 1, comfort: 1 },
+      desc: "檜風呂を思わせる、日本人の遺伝子に響く森の香り。森林浴のような深いくつろぎをもたらします。",
+      cautions: []
+    },
+    {
+      id: "frankincense", name: "フランキンセンス", en: "Frankincense",
+      family: "resin", note: "base", strength: 2,
+      needs: { comfort: 2, relax: 2, clear: 2, sleep: 1 },
+      desc: "古来より祈りの場で焚かれてきた神聖な樹脂の香り。浅くなった呼吸を深くし、心を静めます。",
+      cautions: []
+    },
+    {
+      id: "benzoin", name: "ベンゾイン", en: "Benzoin",
+      family: "resin", note: "base", strength: 3,
+      needs: { comfort: 3, warmth: 2, relax: 1, sleep: 1 },
+      desc: "バニラのように甘くあたたかい樹脂の香り。心細い夜に、毛布にくるまれるような安心感をくれます。",
+      cautions: ["香りが強く残りやすいため少量から"]
+    },
+    {
+      id: "patchouli", name: "パチュリ", en: "Patchouli",
+      family: "resin", note: "base", strength: 3,
+      needs: { relax: 1, comfort: 1, balance: 1, warmth: 1 },
+      desc: "土を思わせる深いオリエンタルな香り。地に足をつけ、ぶれない自分を取り戻したいときに。",
+      cautions: ["香りが強く残りやすいため少量から"]
+    },
+    {
+      id: "vetiver", name: "ベチバー", en: "Vetiver",
+      family: "woody", note: "base", strength: 3,
+      needs: { sleep: 3, relax: 2, comfort: 2 },
+      desc: "「静寂の精油」と呼ばれる深い大地の香り。考えごとで眠れない夜、心のざわめきを鎮めます。",
+      cautions: ["香りが強いため少量から"]
+    },
+    {
+      id: "ginger", name: "ジンジャー", en: "Ginger",
+      family: "spice", note: "middle", strength: 3,
+      needs: { warmth: 3, energize: 2, uplift: 1 },
+      desc: "ぴりっとあたたかい生姜の香り。冷えたからだと、もうひと頑張りしたい心に火を入れてくれます。",
+      cautions: ["肌に使う場合は刺激に注意し低濃度で"]
+    },
+    {
+      id: "lemongrass", name: "レモングラス", en: "Lemongrass",
+      family: "herb", note: "top", strength: 3,
+      needs: { energize: 2, clear: 2, warmth: 1, uplift: 1 },
+      desc: "トムヤムクンでおなじみのアジアンハーブ。疲れた心身に活を入れ、こわばった気持ちをほぐします。",
+      cautions: ["肌に使う場合は刺激に注意し低濃度で"]
+    }
+  ];
+
+  global.AROMA = global.AROMA || {};
+  global.AROMA.oils = oils;
+  if (typeof module !== "undefined" && module.exports) module.exports = oils;
+})(typeof window !== "undefined" ? window : globalThis);
+
+</script>
+<script>
+/* 性格タイプ(8タイプ)
+ * families は、そのタイプと相性のよい香りの系統へのボーナス。
+ */
+(function (global) {
+  const types = {
+    sun: {
+      name: "ひだまりタイプ",
+      catch: "そこにいるだけで、まわりをあたたかく照らす人",
+      desc: "明るくオープンで、人といる時間からエネルギーをもらえるあなた。場の空気をぱっと和ませる、太陽のような存在です。その一方で、まわりを照らし続けて自分の電池が切れかけていることに、本人だけが気づいていないことも。ときには太陽もお休みして、自分のためだけの時間を香りと一緒に過ごしてみてください。",
+      families: { citrus: 2, floral: 1 }
+    },
+    moon: {
+      name: "月あかりタイプ",
+      catch: "静かな夜に、やさしく光る感受性の人",
+      desc: "豊かな感受性と深い内面世界を持つあなた。人の気持ちの機微や、ささいな美しさに気づける、月あかりのような繊細な感性の持ち主です。その分、受け取りすぎて心が疲れてしまうことも。ひとりの時間はあなたの充電時間。香りはその時間を、より深くやさしいものにしてくれます。",
+      families: { floral: 2, resin: 1 }
+    },
+    forest: {
+      name: "森の静けさタイプ",
+      catch: "ゆるがない、おだやかなマイペースの人",
+      desc: "落ち着きがあり、自分のペースを大切にできるあなた。まわりに流されない静かな安定感は、森のように人を安心させます。ただ、変化の少なさが心地よい反面、気づかぬうちに「なんとなくの停滞」を招くことも。新しい香りとの出会いは、森にそよぐ新しい風になってくれるはずです。",
+      families: { woody: 2, herb: 1 }
+    },
+    wind: {
+      name: "そよ風タイプ",
+      catch: "軽やかに、自由に、今日も新しい方へ",
+      desc: "好奇心いっぱいで、フットワークの軽いあなた。新しいもの・面白いものを見つける天才で、風のように自由な発想がまわりに新鮮な空気を運びます。一方で、あちこちに心が向かう分、知らないうちにエネルギーが分散しがち。香りで「今ここ」に戻る習慣は、あなたの軽やかさをもっと心地よくしてくれます。",
+      families: { herb: 2, citrus: 1 }
+    },
+    earth: {
+      name: "大地タイプ",
+      catch: "こつこつと、信頼を積み重ねる人",
+      desc: "誠実で責任感が強く、ものごとをきちんと積み上げていけるあなた。まわりからの信頼は厚く、大地のようにどっしりと頼られる存在です。ただ「ちゃんとしなきゃ」が口ぐせになって、肩の力を抜くのが苦手なところも。香りの時間は、誰のためでもない、あなた自身をゆるめるための時間にしてください。",
+      families: { woody: 2, citrus: 1 }
+    },
+    izumi: {
+      name: "泉タイプ",
+      catch: "そっと寄り添い、心をうるおす人",
+      desc: "共感力が高く、人の気持ちに自然と寄り添えるあなた。困っている人を放っておけない、泉のようにやさしさが湧き出る人です。ただ、人を優先するあまり、自分の疲れや本音はつい後回しに。泉も湧き続けるには水源の手入れが必要です。香りで、まず自分自身をうるおしてあげましょう。",
+      families: { floral: 2, citrus: 1 }
+    },
+    fire: {
+      name: "焚き火タイプ",
+      catch: "情熱を燃やし、人を惹きつける人",
+      desc: "目標に向かってまっすぐ突き進む、情熱と行動力の人。あなたのまわりには、焚き火を囲むように自然と人が集まってきます。ただ、燃え続けるには薪の補給も大切。頑張りすぎて燃え尽きる前に、火を「ほどよい熾火」に整える時間を。香りはそのペース配分の、よい相棒になります。",
+      families: { spice: 2, citrus: 1 }
+    },
+    snow: {
+      name: "雪あかりタイプ",
+      catch: "ていねいに、静かに、芯のある人",
+      desc: "細やかな気配りと丁寧さを持つあなた。慎重で完璧主義なところもありますが、それは「ちゃんと大切にしたい」という誠実さの表れです。その分、小さな心配ごとを抱え込みやすく、緊張がほどけにくいことも。雪が静かに景色をやわらげるように、香りであなたの張りつめた時間をゆるめてあげてください。",
+      families: { floral: 1, resin: 2 }
+    }
+  };
+
+  global.AROMA = global.AROMA || {};
+  global.AROMA.types = types;
+  if (typeof module !== "undefined" && module.exports) module.exports = types;
+})(typeof window !== "undefined" ? window : globalThis);
+
+</script>
+<script>
+/* 診断の質問(30問)
+ * 各選択肢の重み:
+ *   t … 性格タイプへの加点 (sun/moon/forest/wind/earth/izumi/fire/snow)
+ *   n … こころとからだのニーズへの加点 (oils.js の needs と同じキー)
+ *   s … 好みの香り系統への加点 (citrus/floral/herb/woody/resin/spice)
+ */
+(function (global) {
+  const questions = [
+    {
+      q: "朝、目が覚めたとき、いちばん多いのは？",
+      opts: [
+        { label: "すっと起きられて、わりと元気", t: { sun: 2 }, n: { uplift: 1 } },
+        { label: "からだが重くて、布団から出るのがつらい", t: { moon: 1 }, n: { energize: 2, sleep: 1 } },
+        { label: "予定より早く目が覚めて、そのまま眠れない", t: { snow: 1 }, n: { comfort: 2, balance: 1 } },
+        { label: "お茶やコーヒーでゆっくりスイッチを入れる", t: { forest: 2 }, n: { relax: 1 } }
+      ]
+    },
+    {
+      q: "休日の理想の過ごし方は？",
+      opts: [
+        { label: "友人とおしゃべりしたり、イベントに出かける", t: { sun: 2 }, s: { citrus: 1 } },
+        { label: "家でのんびり。本や映画の世界にひたる", t: { moon: 2 }, n: { relax: 1 } },
+        { label: "自然の中をのんびり散歩・ハイキング", t: { forest: 2 }, s: { woody: 1 } },
+        { label: "気になっていた場所へ、ふらっと小さな旅", t: { wind: 2 }, s: { herb: 1 } }
+      ]
+    },
+    {
+      q: "最近の夜の眠り、正直なところは？",
+      opts: [
+        { label: "横になれば、わりとすぐ眠れる", t: { earth: 1 } },
+        { label: "寝つくまでに時間がかかる", n: { sleep: 2, relax: 1 } },
+        { label: "夜中に何度か目が覚めてしまう", n: { sleep: 2, balance: 1 } },
+        { label: "眠りは浅い気がするけど、なんとかなっている", n: { sleep: 1, energize: 1 } }
+      ]
+    },
+    {
+      q: "仕事や家事・勉強に向かうとき、あなたは？",
+      opts: [
+        { label: "計画を立てて、順番にきっちり進めたい", t: { earth: 2 }, n: { focus: 1 } },
+        { label: "気分が乗ったときに一気にやるタイプ", t: { wind: 2 }, n: { uplift: 1 } },
+        { label: "人と相談しながら進めるのが好き", t: { izumi: 2 } },
+        { label: "目標を決めたら、わき目もふらず突き進む", t: { fire: 2 }, n: { energize: 1 } }
+      ]
+    },
+    {
+      q: "ふとしたとき、肩や首の調子は？",
+      opts: [
+        { label: "特に気にならない", t: { sun: 1 } },
+        { label: "いつもガチガチに凝っている", n: { relax: 2, warmth: 1 } },
+        { label: "夕方になるとずっしり重くなる", n: { energize: 1, relax: 1 } },
+        { label: "凝りよりも、目の疲れや頭の重さがつらい", n: { clear: 2, focus: 1 } }
+      ]
+    },
+    {
+      q: "初対面の人が多い集まりでは？",
+      opts: [
+        { label: "自分から話しかけにいくほう", t: { sun: 2 } },
+        { label: "聞き役にまわることが多い", t: { moon: 1, izumi: 1 } },
+        { label: "少人数のグループでなら楽しめる", t: { snow: 1, forest: 1 } },
+        { label: "まず場の空気をじっくり読んでから動く", t: { earth: 1, snow: 1 }, n: { comfort: 1 } }
+      ]
+    },
+    {
+      q: "ここ最近の気分にいちばん近いのは？",
+      opts: [
+        { label: "おおむね明るく、前向きにやれている", t: { sun: 1 } },
+        { label: "なんとなく気持ちが沈みがち", n: { uplift: 2, comfort: 1 } },
+        { label: "ささいなことでイライラ・そわそわしやすい", n: { relax: 2, balance: 1 } },
+        { label: "気分の浮き沈みの波が大きい気がする", t: { moon: 1 }, n: { balance: 2 } }
+      ]
+    },
+    {
+      q: "好きな飲みものに近いのは？",
+      opts: [
+        { label: "すっきりしたレモネードや炭酸水", s: { citrus: 2 } },
+        { label: "香り高いハーブティー", s: { herb: 2 } },
+        { label: "ほっとするほうじ茶・緑茶", t: { forest: 1 }, s: { woody: 1 } },
+        { label: "甘いココアやミルクティー", s: { resin: 2 } }
+      ]
+    },
+    {
+      q: "手足の冷え、感じることはありますか？",
+      opts: [
+        { label: "年中ぽかぽか。冷え知らず", t: { fire: 1 } },
+        { label: "冬はつらいほど冷える", n: { warmth: 2 } },
+        { label: "夏でも手足が冷たいことがある", n: { warmth: 2, balance: 1 } },
+        { label: "冷えよりも、のぼせ・ほてりが気になる", n: { balance: 1, clear: 1 } }
+      ]
+    },
+    {
+      q: "落ち込んだとき、どうやって立ち直る？",
+      opts: [
+        { label: "誰かに話を聞いてもらう", t: { izumi: 2 }, n: { comfort: 1 } },
+        { label: "ひとりでゆっくり考える時間をとる", t: { moon: 2 } },
+        { label: "からだを動かして発散する", t: { fire: 2 }, n: { clear: 1 } },
+        { label: "とにかく寝る。寝ればだいたい回復する", t: { wind: 1 }, n: { sleep: 1 } }
+      ]
+    },
+    {
+      q: "旅行に行くなら、心ひかれるのは？",
+      opts: [
+        { label: "南の島の、明るい海辺", t: { sun: 1 }, s: { citrus: 1 } },
+        { label: "森と温泉のある、静かな山里", t: { forest: 1 }, s: { woody: 2 } },
+        { label: "歴史ある街並みと美術館めぐり", t: { moon: 1 }, s: { resin: 1 } },
+        { label: "ラベンダー畑や花の名所", s: { floral: 2 } }
+      ]
+    },
+    {
+      q: "最近の集中力について言うと？",
+      opts: [
+        { label: "冴えていて、やることがはかどる", t: { earth: 1 } },
+        { label: "気が散りやすくて、長く続かない", n: { focus: 2 } },
+        { label: "頭にうすく、もやがかかった感じがする", n: { focus: 2, clear: 1 } },
+        { label: "集中しすぎて、気づくとぐったりしている", t: { fire: 1 }, n: { relax: 1, energize: 1 } }
+      ]
+    },
+    {
+      q: "人から頼まれごとをされたら？",
+      opts: [
+        { label: "多少無理してでも引き受けてしまう", t: { izumi: 2 }, n: { relax: 1 } },
+        { label: "「できる範囲で」と上手に線を引ける", t: { earth: 1 } },
+        { label: "面白そうなら即OK、気が乗らなければ断る", t: { wind: 1 } },
+        { label: "頼られるのが、実はちょっとうれしい", t: { sun: 1, izumi: 1 } }
+      ]
+    },
+    {
+      q: "お風呂との付き合い方は？",
+      opts: [
+        { label: "ぬるめのお湯で、ゆっくり長湯", t: { forest: 1 }, n: { relax: 1 } },
+        { label: "熱めのお湯で、さっと入る", t: { fire: 1 } },
+        { label: "ついシャワーだけで済ませがち", t: { wind: 1 }, n: { warmth: 1 } },
+        { label: "半身浴しながら本や音楽を楽しむ", t: { moon: 1 }, n: { balance: 1 } }
+      ]
+    },
+    {
+      q: "最近、ため息をつくこと、ありますか？",
+      opts: [
+        { label: "ほとんどないかも", t: { sun: 1 } },
+        { label: "気づくと、ふーっと出ている", n: { relax: 2, clear: 1 } },
+        { label: "疲れたときだけ、たまに", n: { energize: 1 } },
+        { label: "ため息より、あくびのほうが多い", n: { sleep: 1, clear: 1 } }
+      ]
+    },
+    {
+      q: "お部屋の模様替えをするなら？",
+      opts: [
+        { label: "観葉植物やハーブをたくさん置きたい", s: { woody: 1, herb: 1 } },
+        { label: "お気に入りの花を欠かさず飾りたい", s: { floral: 2 } },
+        { label: "明るい色の布や雑貨で楽しい部屋に", t: { sun: 1 }, s: { citrus: 1 } },
+        { label: "間接照明で、落ち着いた大人の空間に", t: { moon: 1 }, s: { resin: 1 } }
+      ]
+    },
+    {
+      q: "締め切りや試験の前、あなたは？",
+      opts: [
+        { label: "早めに終わらせて余裕でいたい", t: { earth: 2 } },
+        { label: "ギリギリの集中力で一気に乗り切る", t: { fire: 1, wind: 1 } },
+        { label: "不安になって、何度も確認してしまう", t: { snow: 1 }, n: { comfort: 2 } },
+        { label: "プレッシャーで眠りが浅くなることがある", n: { sleep: 1, comfort: 1 } }
+      ]
+    },
+    {
+      q: "いちばん好きな季節は？",
+      opts: [
+        { label: "春。花がほころぶ、新しい始まりの季節", t: { izumi: 1 }, s: { floral: 1 } },
+        { label: "夏。太陽と開放感がたまらない", t: { sun: 1 }, s: { citrus: 1 } },
+        { label: "秋。澄んだ空気と静けさが心地いい", t: { moon: 1 }, s: { woody: 1 } },
+        { label: "冬。あたたかい部屋で過ごすぬくもりの時間", t: { snow: 1 }, s: { resin: 1 } }
+      ]
+    },
+    {
+      q: "食欲やおなかの調子はどうですか？",
+      opts: [
+        { label: "快調そのもの", t: { fire: 1 } },
+        { label: "ストレスがあると食欲が変わるタイプ", n: { balance: 1, relax: 1 } },
+        { label: "胃が重い・もたれる日がある", n: { warmth: 1, clear: 1 } },
+        { label: "ついつい食べすぎてしまう", n: { relax: 1, uplift: 1 } }
+      ]
+    },
+    {
+      q: "グループの中でのあなたの役割は？",
+      opts: [
+        { label: "場を盛り上げるムードメーカー", t: { sun: 2 } },
+        { label: "みんなの話を聞く、相談役", t: { izumi: 2 } },
+        { label: "計画や段取りを整える、まとめ役", t: { earth: 2 } },
+        { label: "自由人。気づいたら別行動していることも", t: { wind: 2 } }
+      ]
+    },
+    {
+      q: "新しいことを始めるとき、あなたは？",
+      opts: [
+        { label: "わくわくが勝つ。まず動いてみる", t: { wind: 1, fire: 1 } },
+        { label: "下調べをしっかりしてから動きたい", t: { earth: 1, snow: 1 } },
+        { label: "誰かが一緒なら、心強くて動ける", t: { izumi: 1 }, n: { comfort: 1 } },
+        { label: "最近は腰が重くて、なかなか始められない", n: { energize: 2, uplift: 1 } }
+      ]
+    },
+    {
+      q: "香水やルームフレグランスを選ぶなら？",
+      opts: [
+        { label: "石けんのような、清潔感のある香り", s: { herb: 1, floral: 1 } },
+        { label: "甘くやさしい、包まれるような香り", s: { floral: 1, resin: 1 } },
+        { label: "柑橘のフレッシュで爽やかな香り", s: { citrus: 2 } },
+        { label: "森林や和を感じる、落ち着いた香り", s: { woody: 2 } }
+      ]
+    },
+    {
+      q: "一日の終わり、布団の中で頭の中は？",
+      opts: [
+        { label: "今日の出来事を、つい反芻してしまう", t: { moon: 1 }, n: { sleep: 1, relax: 1 } },
+        { label: "明日の段取りや心配ごとを考えている", t: { earth: 1 }, n: { comfort: 1 } },
+        { label: "布団に入るころには、もう空っぽ", t: { forest: 1 } },
+        { label: "スマホや動画を見ているうちに夜ふかし", n: { sleep: 2, balance: 1 } }
+      ]
+    },
+    {
+      q: "怒りやモヤモヤを感じたとき、どうしてる？",
+      opts: [
+        { label: "その場で言葉にして伝えるほう", t: { fire: 1, sun: 1 } },
+        { label: "ぐっとのみ込んで、あとまで引きずりがち", t: { snow: 1 }, n: { relax: 2, clear: 1 } },
+        { label: "紙に書いたり人に話したりして整理する", t: { izumi: 1, moon: 1 } },
+        { label: "そもそも、あまり怒らない", t: { forest: 2 } }
+      ]
+    },
+    {
+      q: "肌や髪のコンディションは？",
+      opts: [
+        { label: "いまのところ好調", t: { sun: 1 } },
+        { label: "乾燥が気になっている", n: { warmth: 1 }, s: { floral: 1 } },
+        { label: "疲れがすぐ肌に出るタイプ", n: { energize: 1, balance: 1 } },
+        { label: "季節の変わり目にゆらぎがち", n: { balance: 2 } }
+      ]
+    },
+    {
+      q: "「最近、笑ってる？」と聞かれたら？",
+      opts: [
+        { label: "毎日けっこう笑ってる", t: { sun: 1 } },
+        { label: "言われてみると…減ったかもしれない", n: { uplift: 2, comfort: 1 } },
+        { label: "人前では笑うけど、ひとりだと真顔", t: { moon: 1 }, n: { uplift: 1, relax: 1 } },
+        { label: "笑い上戸だとよく言われる", t: { wind: 1 } }
+      ]
+    },
+    {
+      q: "デスクやかばんの中の状態は？",
+      opts: [
+        { label: "いつも整理整頓されている", t: { earth: 2 } },
+        { label: "だいたい把握できていればOK", t: { forest: 1 } },
+        { label: "気づくと物が増えている", t: { wind: 1 } },
+        { label: "最近は、片付ける気力がわかない", n: { energize: 2, clear: 1 } }
+      ]
+    },
+    {
+      q: "「深呼吸」、意識的にすることはありますか？",
+      opts: [
+        { label: "よくする。落ち着くのが分かる", t: { forest: 1 } },
+        { label: "呼吸が浅くなっていると気づくことがある", n: { clear: 2, relax: 1 } },
+        { label: "緊張すると、息が詰まる感じがする", n: { comfort: 2, clear: 1 } },
+        { label: "あまり意識したことがない", t: { wind: 1 } }
+      ]
+    },
+    {
+      q: "月末や季節の変わり目、調子はどうですか？",
+      opts: [
+        { label: "特に変わらず、いつも通り", t: { earth: 1 } },
+        { label: "気分や体調に波が出やすい", n: { balance: 2 } },
+        { label: "頭痛やだるさが出ることがある", n: { clear: 1, energize: 1 } },
+        { label: "やる気がしぼむ時期がある", n: { uplift: 1, energize: 1 } }
+      ]
+    },
+    {
+      q: "最後の質問です。いまのあなたに、いちばん必要なのは？",
+      opts: [
+        { label: "ぐっすり眠れる夜", n: { sleep: 3 } },
+        { label: "心からほっとできる時間", n: { relax: 2, comfort: 1 } },
+        { label: "前に進むためのエネルギー", n: { energize: 2, uplift: 1 } },
+        { label: "頭と心のリセット", n: { clear: 2, focus: 1 } }
+      ]
+    }
+  ];
+
+  global.AROMA = global.AROMA || {};
+  global.AROMA.questions = questions;
+  if (typeof module !== "undefined" && module.exports) module.exports = questions;
+})(typeof window !== "undefined" ? window : globalThis);
+
+</script>
+<script>
+/* 診断ロジック
+ * 30問の回答(各質問の選択肢index)から、
+ *  1. 性格タイプの判定
+ *  2. こころとからだのニーズの集計
+ *  3. 精油2〜6種類のブレンドと滴数の算出
+ * を行う。
+ */
+(function (global) {
+  const NEED_LABELS = {
+    relax:    { label: "緊張をほどいてリラックス", text: "気づかぬうちに、肩や心に力が入っている時間が長いようです。" },
+    sleep:    { label: "心地よい眠りをサポート", text: "眠りの質が、いまのあなたのいちばんの充電ポイントです。" },
+    uplift:   { label: "気分を明るく前向きに", text: "心がすこし曇りがち。香りの力で、窓を開けて光を入れましょう。" },
+    energize: { label: "元気と活力をチャージ", text: "おつかれが溜まっています。まずはエネルギーの補給から。" },
+    focus:    { label: "頭をクリアにして集中", text: "頭のもやを晴らして、すっきり集中できる状態に整えましょう。" },
+    balance:  { label: "こころとからだのバランスを整える", text: "気分や体調に波が出やすい時期。ゆらぎに寄り添う香りを。" },
+    comfort:  { label: "不安をやわらげて安心感を", text: "小さな心配ごとを抱えがち。安心に包まれる時間が必要です。" },
+    warmth:   { label: "からだを温めて巡りをよく", text: "冷えやこわばりのサインが見えています。じんわり温めましょう。" },
+    clear:    { label: "深い呼吸でリフレッシュ", text: "呼吸が浅くなりがち。香りで深いひと呼吸を取り戻しましょう。" }
+  };
+
+  const FAMILY_LABELS = {
+    citrus: "柑橘系",
+    floral: "フローラル系",
+    herb: "ハーブ系",
+    woody: "樹木系",
+    resin: "樹脂・オリエンタル系",
+    spice: "スパイス系"
+  };
+
+  // ブレンドの本数ごとの合計滴数(2種=4滴 〜 6種=9滴)
+  const TOTAL_DROPS = { 2: 4, 3: 5, 4: 6, 5: 8, 6: 9 };
+
+  function addWeights(acc, weights) {
+    if (!weights) return;
+    for (const key of Object.keys(weights)) {
+      acc[key] = (acc[key] || 0) + weights[key];
+    }
+  }
+
+  function topKey(obj, order) {
+    let best = null;
+    let bestVal = -Infinity;
+    for (const key of order) {
+      const v = obj[key] || 0;
+      if (v > bestVal) { best = key; bestVal = v; }
+    }
+    return best;
+  }
+
+  function diagnose(answers, data) {
+    const { questions, oils, types } = data;
+    if (!Array.isArray(answers) || answers.length !== questions.length) {
+      throw new Error("回答数が不正です");
+    }
+
+    // --- 集計 ---
+    const traits = {};
+    const needs = {};
+    const fams = {};
+    questions.forEach((question, i) => {
+      const opt = question.opts[answers[i]];
+      if (!opt) throw new Error("選択肢が不正です: Q" + (i + 1));
+      addWeights(traits, opt.t);
+      addWeights(needs, opt.n);
+      addWeights(fams, opt.s);
+    });
+
+    // --- 性格タイプ判定(同点時はこの並び順で先のものを採用) ---
+    const typeOrder = ["sun", "moon", "forest", "wind", "earth", "izumi", "fire", "snow"];
+    const typeId = topKey(traits, typeOrder);
+    const type = types[typeId];
+
+    // タイプと相性のよい香り系統をボーナス加点
+    addWeights(fams, type.families);
+
+    // --- ニーズの整理 ---
+    // ニーズがまったく無い回答パターンでも破綻しないよう、最低限のデフォルトを置く
+    if (Object.keys(needs).length === 0) {
+      needs.relax = 1;
+      needs.uplift = 1;
+    }
+    const needKeys = Object.keys(NEED_LABELS).filter((k) => (needs[k] || 0) > 0);
+    needKeys.sort((a, b) => (needs[b] - needs[a]) || a.localeCompare(b));
+    const maxNeed = Math.max(needs[needKeys[0]] || 0, 1);
+    const strongNeeds = needKeys.filter((k) => needs[k] >= maxNeed * 0.5);
+
+    // --- ブレンド本数: 強いニーズの数に応じて2〜6種類 ---
+    const size = Math.min(6, Math.max(2, 1 + strongNeeds.length));
+
+    // --- 各精油のスコアリング ---
+    const maxFam = Math.max(...Object.values(fams), 1);
+    const scored = oils.map((oil) => {
+      let score = 0;
+      for (const k of Object.keys(oil.needs)) {
+        score += (needs[k] || 0) / maxNeed * oil.needs[k];
+      }
+      score += 1.5 * ((fams[oil.family] || 0) / maxFam);
+      return { oil, score };
+    });
+    scored.sort((a, b) => (b.score - a.score) || a.oil.id.localeCompare(b.oil.id));
+
+    // --- 精油の選定(同系統に偏りすぎない・香りのノートのバランスを取る) ---
+    const maxPerFamily = Math.max(2, Math.ceil(size / 2));
+    const picked = [];
+    const famCount = {};
+    for (const entry of scored) {
+      if (picked.length >= size) break;
+      const fam = entry.oil.family;
+      if ((famCount[fam] || 0) >= maxPerFamily) continue;
+      picked.push(entry);
+      famCount[fam] = (famCount[fam] || 0) + 1;
+    }
+    // 万一埋まらなければ系統制限を外して補充
+    if (picked.length < size) {
+      for (const entry of scored) {
+        if (picked.length >= size) break;
+        if (!picked.includes(entry)) picked.push(entry);
+      }
+    }
+
+    // 3種以上のブレンドでは、軽い香り(トップ)と残る香り(ミドル/ベース)を両方含める
+    if (size >= 3) {
+      ensureNote(picked, scored, (n) => n === "top");
+      ensureNote(picked, scored, (n) => n !== "top");
+    }
+
+    // --- 滴数の配分 ---
+    // 香りの強い精油は少なめになるよう、スコアを香り強度で割って重みとする
+    const total = TOTAL_DROPS[picked.length] || 5;
+    const weights = picked.map((e) => Math.max(e.score, 0.1) / (0.5 + 0.5 * e.oil.strength));
+    const drops = allocateDrops(weights, total);
+
+    const blend = picked
+      .map((e, i) => ({ oil: e.oil, drops: drops[i] }))
+      .sort((a, b) => (b.drops - a.drops) || a.oil.id.localeCompare(b.oil.id));
+
+    // --- 注意事項の収集 ---
+    const cautions = [];
+    for (const item of blend) {
+      for (const c of item.oil.cautions) {
+        const text = item.oil.name + ": " + c;
+        if (!cautions.includes(text)) cautions.push(text);
+      }
+    }
+
+    return {
+      typeId,
+      type,
+      topNeeds: needKeys.slice(0, 3).map((k) => ({ key: k, ...NEED_LABELS[k], score: needs[k] })),
+      blend,
+      totalDrops: blend.reduce((sum, b) => sum + b.drops, 0),
+      cautions
+    };
+  }
+
+  // picked の中に条件を満たすノートの精油が無ければ、
+  // スコア上位の未選定精油と最下位の選定済み精油を入れ替える
+  function ensureNote(picked, scored, noteTest) {
+    if (picked.some((e) => noteTest(e.oil.note))) return;
+    const candidate = scored.find((e) => !picked.includes(e) && noteTest(e.oil.note));
+    if (!candidate) return;
+    // 入れ替えても条件が崩れないよう、同条件でない精油の中で最下位を外す
+    for (let i = picked.length - 1; i >= 0; i--) {
+      if (!noteTest(picked[i].oil.note)) {
+        picked[i] = candidate;
+        return;
+      }
+    }
+  }
+
+  // 重みに比例して合計 total 滴を配分(各精油 最低1滴、最大化剰余方式)
+  function allocateDrops(weights, total) {
+    const n = weights.length;
+    const sum = weights.reduce((a, b) => a + b, 0) || 1;
+    const raw = weights.map((w) => (w / sum) * total);
+    const drops = raw.map((r) => Math.max(1, Math.floor(r)));
+    let used = drops.reduce((a, b) => a + b, 0);
+
+    // 余りの大きい順に1滴ずつ追加
+    const order = raw
+      .map((r, i) => ({ i, frac: r - Math.floor(r) }))
+      .sort((a, b) => b.frac - a.frac);
+    let oi = 0;
+    while (used < total) {
+      drops[order[oi % n].i] += 1;
+      used += 1;
+      oi += 1;
+    }
+    // 切り上げで超過した場合は、多い精油から1滴ずつ減らす(最低1滴は保つ)
+    while (used > total) {
+      let maxI = 0;
+      for (let i = 1; i < n; i++) if (drops[i] > drops[maxI]) maxI = i;
+      if (drops[maxI] <= 1) break;
+      drops[maxI] -= 1;
+      used -= 1;
+    }
+    return drops;
+  }
+
+  const api = { diagnose, NEED_LABELS, FAMILY_LABELS, TOTAL_DROPS };
+  global.AROMA = global.AROMA || {};
+  Object.assign(global.AROMA, api);
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+})(typeof window !== "undefined" ? window : globalThis);
+
+</script>
+<script>
+/* 画面制御 */
+(function () {
+  const A = window.AROMA;
+  const questions = A.questions;
+
+  const screens = {
+    home: document.getElementById("screen-home"),
+    quiz: document.getElementById("screen-quiz"),
+    result: document.getElementById("screen-result")
+  };
+
+  const els = {
+    start: document.getElementById("btn-start"),
+    back: document.getElementById("btn-back"),
+    progressText: document.getElementById("progress-text"),
+    progressFill: document.getElementById("progress-fill"),
+    progressWrap: document.getElementById("progress-bar-wrap"),
+    questionCard: document.getElementById("question-card"),
+    questionNo: document.getElementById("question-no"),
+    questionText: document.getElementById("question-text"),
+    options: document.getElementById("options"),
+    resultInner: document.getElementById("result-inner")
+  };
+
+  let current = 0;
+  let answers = [];
+
+  function showScreen(name) {
+    for (const key of Object.keys(screens)) {
+      screens[key].classList.toggle("is-active", key === name);
+    }
+    window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
+  }
+
+  function startQuiz() {
+    current = 0;
+    answers = [];
+    showScreen("quiz");
+    renderQuestion();
+  }
+
+  function renderQuestion() {
+    const q = questions[current];
+    els.progressText.textContent = `質問 ${current + 1} / ${questions.length}`;
+    els.progressFill.style.width = `${(current / questions.length) * 100}%`;
+    els.progressWrap.setAttribute("aria-valuenow", String(current));
+    els.questionNo.textContent = `Q${current + 1}`;
+    els.questionText.textContent = q.q;
+    els.back.disabled = current === 0;
+
+    els.options.innerHTML = "";
+    q.opts.forEach((opt, idx) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "option-btn";
+      if (answers[current] === idx) btn.classList.add("is-selected");
+      btn.textContent = opt.label;
+      btn.addEventListener("click", () => selectOption(idx, btn));
+      els.options.appendChild(btn);
+    });
+
+    // ふわっと出すアニメーション
+    els.questionCard.classList.remove("fade-in");
+    void els.questionCard.offsetWidth;
+    els.questionCard.classList.add("fade-in");
+  }
+
+  function selectOption(idx, btn) {
+    answers[current] = idx;
+    [...els.options.children].forEach((b) => b.classList.remove("is-selected"));
+    btn.classList.add("is-selected");
+
+    // 選択の余韻を少し見せてから次へ
+    setTimeout(() => {
+      if (current < questions.length - 1) {
+        current += 1;
+        renderQuestion();
+      } else {
+        showResult();
+      }
+    }, 260);
+  }
+
+  function goBack() {
+    if (current > 0) {
+      current -= 1;
+      renderQuestion();
+    }
+  }
+
+  function showResult() {
+    const result = A.diagnose(answers, {
+      questions: A.questions,
+      oils: A.oils,
+      types: A.types
+    });
+    els.resultInner.innerHTML = buildResultHTML(result);
+    showScreen("result");
+
+    document.getElementById("btn-restart").addEventListener("click", () => {
+      showScreen("home");
+    });
+    const copyBtn = document.getElementById("btn-copy");
+    copyBtn.addEventListener("click", () => copyRecipe(result, copyBtn));
+  }
+
+  function dropIcons(count) {
+    const drop =
+      '<svg class="drop" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5C12 2.5 5.5 10.5 5.5 15a6.5 6.5 0 0 0 13 0C18.5 10.5 12 2.5 12 2.5Z"/></svg>';
+    return drop.repeat(count);
+  }
+
+  function escapeHTML(s) {
+    return s.replace(/[&<>"']/g, (c) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[c]));
+  }
+
+  function buildResultHTML(result) {
+    const t = result.type;
+
+    const needsHTML = result.topNeeds
+      .map(
+        (n) => `
+        <li class="need-item">
+          <span class="need-label">${escapeHTML(n.label)}</span>
+          <span class="need-text">${escapeHTML(n.text)}</span>
+        </li>`
+      )
+      .join("");
+
+    const blendHTML = result.blend
+      .map(
+        (b) => `
+        <li class="blend-row">
+          <div class="blend-oil">
+            <span class="oil-chip oil-chip--${b.oil.family}">${escapeHTML(A.FAMILY_LABELS[b.oil.family])}</span>
+            <span class="oil-name">${escapeHTML(b.oil.name)}</span>
+            <span class="oil-en">${escapeHTML(b.oil.en)}</span>
+          </div>
+          <div class="blend-drops">
+            <span class="drops-icons">${dropIcons(b.drops)}</span>
+            <span class="drops-num">${b.drops}滴</span>
+          </div>
+        </li>`
+      )
+      .join("");
+
+    const oilDescHTML = result.blend
+      .map(
+        (b) => `
+        <li class="oil-desc-item">
+          <h4 class="oil-desc-name">${escapeHTML(b.oil.name)} <span class="oil-en">${escapeHTML(b.oil.en)}</span></h4>
+          <p class="oil-desc-text">${escapeHTML(b.oil.desc)}</p>
+        </li>`
+      )
+      .join("");
+
+    const cautionsHTML =
+      result.cautions.length > 0
+        ? `<ul class="caution-list">${result.cautions
+            .map((c) => `<li>${escapeHTML(c)}</li>`)
+            .join("")}</ul>`
+        : "";
+
+    return `
+      <p class="result-eyebrow">あなたの診断結果</p>
+      <section class="result-card type-card fade-in">
+        <p class="type-heading">あなたは</p>
+        <h2 class="type-name">${escapeHTML(t.name)}</h2>
+        <p class="type-catch">${escapeHTML(t.catch)}</p>
+        <p class="type-desc">${escapeHTML(t.desc)}</p>
+      </section>
+
+      <section class="result-card fade-in">
+        <h3 class="result-section-title"><span class="title-deco">🌱</span>こころとからだのサイン</h3>
+        <p class="result-section-lead">回答の中から、いまのあなたにそっと必要そうなものを読み取りました。</p>
+        <ul class="need-list">${needsHTML}</ul>
+      </section>
+
+      <section class="result-card blend-card fade-in">
+        <h3 class="result-section-title"><span class="title-deco">💧</span>あなたのためのブレンドレシピ</h3>
+        <p class="result-section-lead">${escapeHTML(t.name)}のあなたへ。${result.blend.length}種類・合計${result.totalDrops}滴のブレンドです。</p>
+        <ul class="blend-list">${blendHTML}</ul>
+        <button id="btn-copy" class="btn btn-sub">レシピをコピーする</button>
+      </section>
+
+      <section class="result-card fade-in">
+        <h3 class="result-section-title"><span class="title-deco">🌿</span>ブレンドに使う精油たち</h3>
+        <ul class="oil-desc-list">${oilDescHTML}</ul>
+      </section>
+
+      <section class="result-card fade-in">
+        <h3 class="result-section-title"><span class="title-deco">🫖</span>楽しみ方</h3>
+        <ul class="usage-list">
+          <li><strong>芳香浴(ディフューザー)</strong> — レシピの滴数をそのまま入れて、お部屋に香りを広げて。</li>
+          <li><strong>ハンカチ・マグカップ</strong> — 合計1〜2滴に減らして垂らせば、外出先やデスクでも手軽に。</li>
+          <li><strong>アロマバス</strong> — 合計3〜5滴を無水エタノールやバスオイルなどの基材に混ぜてから湯船へ。精油を直接お湯に入れるのは避けましょう。</li>
+        </ul>
+      </section>
+
+      <section class="result-card caution-card fade-in">
+        <h3 class="result-section-title"><span class="title-deco">⚠️</span>安全に楽しむために</h3>
+        ${cautionsHTML}
+        <ul class="caution-list caution-list--common">
+          <li>精油の原液を直接肌につけない・飲用しないでください。</li>
+          <li>妊娠中・授乳中の方、持病のある方、お子さまやペットのいるご家庭では、使用前に専門家へご相談ください。</li>
+          <li>体調や肌に異変を感じたら、すぐに使用を中止してください。</li>
+          <li>この診断は医療行為ではなく、香りを楽しむための提案です。</li>
+        </ul>
+      </section>
+
+      <div class="result-actions">
+        <button id="btn-restart" class="btn btn-primary">もう一度診断する</button>
+      </div>
+    `;
+  }
+
+  function copyRecipe(result, btn) {
+    const lines = [
+      "【こころ香 アロマブレンドレシピ】",
+      `タイプ: ${result.type.name}`,
+      ...result.blend.map((b) => `・${b.oil.name} (${b.oil.en}) … ${b.drops}滴`),
+      `合計 ${result.totalDrops}滴`
+    ];
+    const text = lines.join("\n");
+
+    const done = () => {
+      const original = btn.textContent;
+      btn.textContent = "コピーしました ✓";
+      btn.disabled = true;
+      setTimeout(() => {
+        btn.textContent = original;
+        btn.disabled = false;
+      }, 1800);
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, () => fallbackCopy(text, done));
+    } else {
+      fallbackCopy(text, done);
+    }
+  }
+
+  function fallbackCopy(text, done) {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand("copy");
+      done();
+    } catch (e) {
+      window.prompt("以下のレシピをコピーしてください", text);
+    }
+    document.body.removeChild(ta);
+  }
+
+  els.start.addEventListener("click", startQuiz);
+  els.back.addEventListener("click", goBack);
+})();
+
+</script>
+</body>
+</html>
